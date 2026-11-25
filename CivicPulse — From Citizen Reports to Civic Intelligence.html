@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CivicPulse — From Citizen Reports to Civic Intelligence</title>
+<style>
+:root{--bg:#f3f6fb;--sf:#fff;--tx:#0e1a2c;--mu:#5a6a82;--bd:#e0e6f0;--ac:#2557e8;--r:#dc2626;--o:#ea7a0c;--y:#c99700;--g:#16a34a;--sh:0 1px 3px rgba(15,30,60,.08);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1120;--sf:#131c2f;--tx:#e8eefb;--mu:#93a2bd;--bd:#25324b;--ac:#6f93ff;--sh:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1120;--sf:#131c2f;--tx:#e8eefb;--mu:#93a2bd;--bd:#25324b;--ac:#6f93ff;--sh:none;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--sf);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 18px}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.4px;cursor:pointer}.logo b{color:var(--ac)}
+nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}nav button,.seg button{background:none;border:0;color:var(--mu);padding:6px 11px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600}
+nav button.on,.seg button.on{background:var(--ac);color:#fff}
+.seg{display:flex;border:1px solid var(--bd);border-radius:10px;padding:2px}
+select,input,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:8px 10px;width:100%}
+header select{width:auto}
+main{max-width:1100px;margin:0 auto;padding:18px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+h1{font-size:clamp(28px,5vw,44px);letter-spacing:-1px;margin:0 0 6px;line-height:1.1}h2{margin:0 0 10px;font-size:18px}h3{margin:0 0 6px;font-size:15px}
+.mu{color:var(--mu)}.sm{font-size:13px}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn.alt{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}.btn.ok{background:var(--g)}.btn.no{background:var(--r)}.btn.o{background:var(--o)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero{background:linear-gradient(135deg,#0f2a6b,#2557e8 60%,#18b6a4);color:#fff;border-radius:18px;padding:28px}
+.hero .btn.alt{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
+.stat b{display:block;font-size:26px;letter-spacing:-.5px}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;color:#fff}
+.c-r{background:var(--r)}.c-o{background:var(--o)}.c-y{background:var(--y)}.c-g{background:var(--g)}.c-b{background:var(--ac)}
+.chat{height:380px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:4px}
+.m{max-width:85%;padding:9px 13px;border-radius:14px;background:var(--bg);border:1px solid var(--bd)}
+.m.u{align-self:flex-end;background:var(--ac);color:#fff;border-color:var(--ac)}
+.bar{height:8px;background:var(--bd);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.bd{display:grid;grid-template-columns:130px 1fr 54px;gap:8px;align-items:center;margin:5px 0;font-size:13px}
+.item{display:flex;gap:12px;align-items:center;cursor:pointer;padding:12px;border:1px solid var(--bd);border-radius:12px;background:var(--sf);margin-bottom:8px}
+.item:hover{border-color:var(--ac)}.sc{min-width:48px;height:48px;border-radius:12px;color:#fff;display:grid;place-items:center;font-weight:800}
+.tl{display:flex;flex-wrap:wrap;gap:6px}.tl span{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--bd);color:var(--mu)}.tl span.d{background:var(--g);border-color:var(--g);color:#fff}
+.note{font-size:12px;color:var(--mu);border-left:3px solid var(--y);padding-left:8px;margin-top:8px}
+.warn{background:rgba(220,38,38,.1);border:1px solid var(--r);border-radius:10px;padding:10px;margin:8px 0}
+svg text{fill:var(--mu);font-size:11px}
+.vg{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px}
+</style></head><body>
+<header><div class="logo" onclick="go('home')">Civic<b>Pulse</b></div><nav id="nav"></nav>
+<div class="seg" id="mode"></div>
+<select id="lang" onchange="LG=this.value;render()"><option value="en">English</option><option value="hi">हिंदी</option><option value="kn">ಕನ್ನಡ</option><option value="mr">मराठी</option></select></header>
+<main id="app"></main>
+<script>
+let LG='en',MODE='cit',V='home',SEL=1024,CH=null,TM=[];
+const T={
+en:{tag:'Report a civic issue in seconds.',rep:'Report Issue',voice:'🎙 Report Using Voice',ai:'🤖 Report Using AI',trk:'Track My Reports',nb:'Nearby Issues',home:'Home',dash:'Dashboard',
+g:'Hi! What civic problem would you like to report?',q:'I understand. Is it blocking traffic or creating danger?',id:(c,s)=>`I’ve identified this as a ${s}-severity ${c} issue. Where is it? (share location or type a landmark)`,ph:'Got it. Optional: add a photo for verification.',ty:'Type or speak…',send:'Send',gps:'📍 Use detected GPS',photo:'📷 Attach photo',skip:'Skip photo'},
+hi:{tag:'कुछ ही सेकंड में नागरिक समस्या दर्ज करें।',rep:'समस्या दर्ज करें',voice:'🎙 आवाज़ से रिपोर्ट',ai:'🤖 AI से रिपोर्ट',trk:'मेरी रिपोर्ट',nb:'आसपास की समस्याएँ',home:'होम',dash:'डैशबोर्ड',
+g:'नमस्ते! आप कौन सी नागरिक समस्या दर्ज करना चाहते हैं?',q:'समझ गया। क्या यह ट्रैफ़िक रोक रही है या ख़तरा पैदा कर रही है?',id:(c,s)=>`मैंने इसे ${s} गंभीरता की "${c}" समस्या के रूप में पहचाना है। यह कहाँ है? (लोकेशन दें या स्थान लिखें)`,ph:'ठीक है। वैकल्पिक: सत्यापन के लिए फ़ोटो जोड़ें।',ty:'लिखें या बोलें…',send:'भेजें',gps:'📍 GPS लोकेशन',photo:'📷 फ़ोटो जोड़ें',skip:'फ़ोटो छोड़ें'},
+kn:{tag:'ಕೆಲವೇ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನಾಗರಿಕ ಸಮಸ್ಯೆ ವರದಿ ಮಾಡಿ.',rep:'ಸಮಸ್ಯೆ ವರದಿ',voice:'🎙 ಧ್ವನಿಯಿಂದ ವರದಿ',ai:'🤖 AI ಮೂಲಕ ವರದಿ',trk:'ನನ್ನ ವರದಿಗಳು',nb:'ಹತ್ತಿರದ ಸಮಸ್ಯೆಗಳು',home:'ಮುಖಪುಟ',dash:'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+g:'ನಮಸ್ಕಾರ! ಯಾವ ನಾಗರಿಕ ಸಮಸ್ಯೆಯನ್ನು ವರದಿ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ?',q:'ಅರ್ಥವಾಯಿತು. ಇದು ಸಂಚಾರಕ್ಕೆ ಅಡ್ಡಿಯಾಗುತ್ತಿದೆಯೇ ಅಥವಾ ಅಪಾಯ ಉಂಟುಮಾಡುತ್ತಿದೆಯೇ?',id:(c,s)=>`ಇದನ್ನು ${s} ತೀವ್ರತೆಯ "${c}" ಸಮಸ್ಯೆ ಎಂದು ಗುರುತಿಸಿದ್ದೇನೆ. ಇದು ಎಲ್ಲಿದೆ? (ಸ್ಥಳ ಹಂಚಿ ಅಥವಾ ಹೆಗ್ಗುರುತು ಬರೆಯಿರಿ)`,ph:'ಸರಿ. ಐಚ್ಛಿಕ: ಪರಿಶೀಲನೆಗೆ ಫೋಟೋ ಸೇರಿಸಿ.',ty:'ಬರೆಯಿರಿ ಅಥವಾ ಮಾತನಾಡಿ…',send:'ಕಳುಹಿಸಿ',gps:'📍 GPS ಸ್ಥಳ',photo:'📷 ಫೋಟೋ',skip:'ಫೋಟೋ ಬೇಡ'},
+mr:{tag:'काही सेकंदात नागरी समस्या नोंदवा.',rep:'समस्या नोंदवा',voice:'🎙 आवाजाने रिपोर्ट',ai:'🤖 AI द्वारे रिपोर्ट',trk:'माझे रिपोर्ट',nb:'जवळच्या समस्या',home:'मुख्यपृष्ठ',dash:'डॅशबोर्ड',
+g:'नमस्कार! तुम्हाला कोणती नागरी समस्या नोंदवायची आहे?',q:'समजले. यामुळे वाहतूक अडते आहे किंवा धोका निर्माण होतो आहे का?',id:(c,s)=>`मी हे ${s} तीव्रतेची "${c}" समस्या म्हणून ओळखले आहे. ते कुठे आहे? (लोकेशन द्या किंवा खूण लिहा)`,ph:'ठीक आहे. पर्यायी: पडताळणीसाठी फोटो जोडा.',ty:'लिहा किंवा बोला…',send:'पाठवा',gps:'📍 GPS लोकेशन',photo:'📷 फोटो जोडा',skip:'फोटो वगळा'}};
+const t=k=>T[LG][k];
+const CN={Pothole:{hi:'गड्ढा',kn:'ಗುಂಡಿ',mr:'खड्डा'},'Water Leakage':{hi:'पानी रिसाव',kn:'ನೀರು ಸೋರಿಕೆ',mr:'पाणी गळती'},Garbage:{hi:'कचरा',kn:'ಕಸ',mr:'कचरा'},'Broken Streetlight':{hi:'खराब स्ट्रीटलाइट',kn:'ಕೆಟ್ಟ ಬೀದಿದೀಪ',mr:'बंद पथदिवा'},'Open Drain':{hi:'खुली नाली',kn:'ತೆರೆದ ಚರಂಡಿ',mr:'उघडी गटार'},'Road Damage':{hi:'सड़क क्षति',kn:'ರಸ್ತೆ ಹಾನಿ',mr:'रस्ता नुकसान'}};
+const cn=c=>(CN[c]&&CN[c][LG])||c;
+const KW=[['Pothole',/pothole|गड्ढ|ಗುಂಡಿ|खड्ड/i],['Broken Streetlight',/street ?light|light|बत्ती|लाइट|ಬೀದಿದೀಪ|ದೀಪ|दिवा/i],['Garbage',/garbage|trash|waste|कचरा|ಕಸ|कचरा/i],['Water Leakage',/leak|pipe|पानी|रिसाव|ನೀರು|ಸೋರಿಕೆ|पाणी|गळती/i],['Open Drain',/drain|sewage|नाली|ಚರಂಡಿ|गटार/i],['Road Damage',/road|सड़क|ರಸ್ತೆ|रस्ता/i]];
+const HZ={Pothole:'Traffic / two-wheeler safety','Broken Streetlight':'Low visibility / pedestrian safety',Garbage:'Health & sanitation','Water Leakage':'Water loss / road erosion','Open Drain':'Health / fall hazard','Road Damage':'Traffic safety',Other:'General'};
+const DEPT={Pothole:'Road Maintenance','Road Damage':'Road Maintenance',Garbage:'Solid Waste Mgmt','Water Leakage':'Water Board','Broken Streetlight':'Electricity (Street Lighting)','Open Drain':'Drainage & Sewerage',Other:'Ward Office'};
+let I=[
+{id:1024,c:'Pothole',r:47,v:82,t:94,b:[30,25,20,10,7],near:'School',st:'In Progress',x:300,y:170,d:'350 m',days:6,loc:'College Road, Ward 12',dept:'Road Maintenance'},
+{id:1051,c:'Water Leakage',r:21,v:45,t:88,b:[28,20,20,10,7],near:'Hospital',st:'Verified',x:150,y:105,d:'1.4 km',days:4,loc:'Hospital Cross, Ward 7',dept:''},
+{id:1110,c:'Road Damage',r:26,v:31,t:90,b:[27,18,15,10,8],near:'Bus stop',st:'Reported',x:470,y:90,d:'2.0 km',days:5,loc:'Market Road, Ward 3',dept:''},
+{id:1102,c:'Open Drain',r:15,v:20,t:86,b:[25,16,14,9,8],near:'Transit',st:'Assigned',x:430,y:250,d:'1.9 km',days:7,loc:'Station Lane, Ward 9',dept:'Drainage & Sewerage'},
+{id:1066,c:'Garbage',r:18,v:22,t:81,b:[20,14,12,8,7],near:'Market',st:'Verified',x:240,y:265,d:'700 m',days:3,loc:'Old Market, Ward 5',dept:''},
+{id:1093,c:'Broken Streetlight',r:9,v:14,t:79,b:[22,10,12,6,4],near:'—',st:'Reported',x:90,y:230,d:'1.1 km',days:2,loc:'Lake View Rd, Ward 2',dept:''},
+{id:1081,c:'Garbage',r:12,v:9,t:84,b:[20,14,12,8,7],near:'—',st:'Resolved',x:520,y:200,d:'3.2 km',days:9,loc:'Ring Road, Ward 14',dept:'Solid Waste Mgmt'}];
+I.forEach(i=>i.vote={y:0,n:0});
+const P=i=>i.b.reduce((a,b)=>a+b,0);
+const lv=i=>i.st=='Resolved'?['Resolved','g']:P(i)>=85?['CRITICAL','r']:P(i)>=70?['High','o']:P(i)>=55?['Medium','y']:['Low','g'];
+const SC=i=>`<div class="sc c-${lv(i)[1]}">${P(i)}</div>`;
+const STEPS=['Reported','Verified','Clustered','Prioritised','Assigned','In Progress','Resolved','Citizen Verified'];
+const prog=i=>({Reported:1,Verified:3,Assigned:5,'In Progress':6,'Resolved (verifying)':7,Resolved:8,Reopened:6})[i.st]||(i.st=='Verified'?4:1);
+const $=s=>document.querySelector(s);
+function go(v,id){V=v;if(id)SEL=id;render();scrollTo(0,0)}
+function setMode(m){MODE=m;go(m=='cit'?'home':'dash')}
+function render(){
+ $('#nav').innerHTML=(MODE=='cit'?[['home',t('home')],['near',t('nb')],['track',t('trk')],['rep',t('rep')],['chat','🤖 AI']]:[['dash',t('dash')]]).map(([k,l])=>`<button class="${V==k?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ $('#mode').innerHTML=[['cit','Citizen'],['auth','Authority']].map(([k,l])=>`<button class="${MODE==k?'on':''}" onclick="setMode('${k}')">${l}</button>`).join('');
+ ({home:Home,rep:Rep,chat:Chat,near:Near,track:Track,dash:Dash,det:Det})[V]();
+}
+function Home(){
+ $('#app').innerHTML=`<div class="hero"><div class="sm" style="opacity:.8;font-weight:700">CIVICPULSE · SMART-CITY INTELLIGENCE</div><h1>${t('tag')}</h1><p style="max-width:560px;opacity:.9">We don’t just collect complaints. We convert citizen voices, images and reports into verified, prioritised and actionable civic intelligence.</p>
+ <div class="row"><button class="btn" style="background:#fff;color:#0f2a6b" onclick="go('rep')">${t('rep')}</button><button class="btn alt" onclick="go('chat');CH=null;setTimeout(()=>startChat(1),50)">${t('voice')}</button><button class="btn alt" onclick="go('chat')">${t('ai')}</button><button class="btn alt" onclick="go('track')">${t('trk')}</button><button class="btn alt" onclick="go('near')">${t('nb')}</button></div></div>
+ <div class="grid g4" style="margin:14px 0">${[['1,248','Issues Reported'],['876','Resolved'],['72','High Priority'],['94%','Community Verification Rate']].map(s=>`<div class="card stat"><b>${s[0]}</b><span class="mu sm">${s[1]}</span></div>`).join('')}</div>
+ <div class="card"><h2>▶ Demo Mode — experience the full workflow</h2><p class="mu">Story: “There is a dangerous pothole near my college” → verified → merged with 46 other reports → priority 92 → repaired → neighbours verify.</p>
+ <div class="row"><button class="btn" onclick="demoCit()">Citizen Demo</button><button class="btn alt" onclick="demoAuth()">Authority Demo</button></div></div>`}
+function clear(){TM.forEach(clearTimeout);TM=[]}
+function later(f,ms){TM.push(setTimeout(f,ms))}
+function demoCit(){clear();MODE='cit';V='chat';CH=null;render();const s=['There is a dangerous pothole near my college.','Yes, bikes are having difficulty passing.','Near Government College, College Road','📷'];s.forEach((x,i)=>later(()=>send(x),1200+i*2400))}
+function demoAuth(){clear();MODE='auth';const i=I[0];i.st='In Progress';i.vote={y:0,n:0};go('det',1024);
+ later(()=>act(1024,'res'),3200);[0,1,2,3].forEach(k=>later(()=>vote(1024,'y'),5200+k*700));}
+// ---------- chat ----------
+function startChat(voice){CH={s:0,m:[{b:1,x:t('g')}],d:{}};drawChat();if(voice)mic()}
+function Chat(){if(!CH)CH={s:0,m:[{b:1,x:t('g')}],d:{}};
+ $('#app').innerHTML=`<div class="grid g2"><div class="card"><h2>🤖 AI Civic Assistant</h2><div class="chat" id="ch"></div><div class="row" id="chips" style="margin:8px 0"></div>
+ <div class="row" style="flex-wrap:nowrap"><input id="in" placeholder="${t('ty')}" onkeydown="if(event.key=='Enter')send()"><button class="btn alt" onclick="mic()" title="Voice">🎙</button><button class="btn" onclick="send()">${t('send')}</button></div>
+ <div class="note">Speech recognition runs in your browser and uses the selected language. Text, voice and photo are all converted into one structured report.</div></div>
+ <div class="card" id="side"><h2>Structured report</h2><p class="mu sm">Fields appear here as the assistant extracts them.</p></div></div>`;drawChat()}
+function drawChat(){const c=$('#ch');if(!c)return;c.innerHTML=CH.m.map(m=>`<div class="m ${m.b?'':'u'}">${m.x}</div>`).join('');c.scrollTop=1e5;
+ const s=CH.s;$('#chips').innerHTML=s==2?`<button class="btn alt" onclick="send('GPS')">${t('gps')}</button>`:s==3?`<button class="btn alt" onclick="send('📷')">${t('photo')}</button><button class="btn alt" onclick="send('skip')">${t('skip')}</button>`:'';
+ const d=CH.d;if(d.c&&$('#side'))$('#side').innerHTML=`<h2>Structured report</h2><div class="vg"><span class="mu">Category</span><b>${d.c}</b><span class="mu">Severity</span><b>${d.sev||'…'}</b><span class="mu">Potential hazard</span><b>${HZ[d.c]}</b><span class="mu">Keywords</span><b>${(d.k||[]).join(', ')}</b><span class="mu">Location</span><b>${d.l||'…'}</b><span class="mu">Input language</span><b>${LG.toUpperCase()} → common schema</b></div><div id="res"></div>`}
+function bot(x,ms=500){later(()=>{CH.m.push({b:1,x});drawChat()},ms)}
+function send(x){if(!CH)return;const inp=$('#in');x=x||(inp&&inp.value.trim());if(!x)return;if(inp)inp.value='';
+ const lab=x=='GPS'?t('gps'):x=='skip'?t('skip'):x=='📷'?'📷 photo.jpg':x;CH.m.push({x:lab});const d=CH.d;drawChat();
+ if(CH.s==0){const k=KW.find(k=>k[1].test(x));d.c=k?k[0]:'Other';d.k=(x.match(/pothole|dangerous|college|hospital|school|night|streetlight|garbage|leak|bikes?|गड्ढ\S*|ಗುಂಡಿ\S*|खड्ड\S*|कचरा|ಕಸ/gi)||[]).slice(0,5);d.txt=x;
+  d.sev=/dangerous|huge|accident|hospital|school|cannot see|ख़तरनाक|खतरनाक|ಅಪಾಯ|धोकादायक/i.test(x)?'High':'Medium';CH.s=1;drawChat();bot(t('q'))}
+ else if(CH.s==1){if(/yes|हाँ|हां|ಹೌದು|होय|bike|difficult|block|मुश्किल|ಕಷ್ಟ|अडथळा/i.test(x))d.sev='High';CH.s=2;drawChat();bot(t('id')(cn(d.c),d.sev))}
+ else if(CH.s==2){d.l=x=='GPS'?'Detected GPS: 12.9716° N, 77.5946° E (College Road)':x;CH.s=3;drawChat();bot(t('ph'))}
+ else if(CH.s==3){d.photo=x=='📷';CH.s=4;drawChat();bot('⏳ Verifying report signals…',300);later(()=>finish(d.c,$('#res'),d),1500)}}
+function mic(){const R=window.SpeechRecognition||window.webkitSpeechRecognition,L={en:'en-IN',hi:'hi-IN',kn:'kn-IN',mr:'mr-IN'}[LG];
+ if(!R){$('#in').value='There is a broken streetlight near the hospital and people cannot see the road at night.';return}
+ try{const r=new R();r.lang=L;r.onresult=e=>{$('#in').value=e.results[0][0].transcript;send()};r.start()}catch(e){}}
+// ---------- pipeline result ----------
+function finish(cat,el,d){d=d||{};const sev=d.sev||'High';let m=I.find(i=>i.c==cat&&i.st!='Resolved');let isNew=!m;
+ if(m)m.r++;else{m={id:1120+I.length,c:cat,r:1,v:0,t:90,b:[sev=='High'?24:16,3,10,1,1],near:'—',st:'Reported',x:200+Math.random()*200,y:80+Math.random()*180,d:'0 m',days:0,loc:d.l||'Your location',dept:'',vote:{y:0,n:0}};I.push(m)}
+ if(m.r>47&&m.id==1024)m.r=47;
+ const rows=[['AI-generated likelihood','8% (low)'],['Duplicate image','No exact match'],['Metadata','Available'],['Location consistency','Verified'],['Manipulation indicators','Low']];
+ const html=`<h3 style="margin-top:14px">Multi-signal verification</h3><div class="vg">${rows.map(r=>`<span class="mu">${r[0]}</span><b>${r[1]}</b>`).join('')}</div>
+ <div class="row" style="margin:8px 0"><b style="font-size:22px">TRUST SCORE ${m.t}/100</b><span class="badge c-g">HIGH CONFIDENCE</span></div>
+ <div class="note">Prototype heuristics only — AI-generated image detection is probabilistic and is never claimed to be 100% accurate.</div>
+ <h3 style="margin-top:14px">Duplicate detection</h3><div class="sm mu">Geo proximity 96% · Image similarity 91% · Category match · Description similarity 88% · Time proximity (${m.days}d)</div>
+ <div class="card" style="margin:8px 0;border-color:var(--ac)"><b>${isNew?'New civic issue created':m.r+' citizen reports consolidated into one civic issue.'}</b><div class="sm mu">CIVIC ISSUE #${m.id} · ${m.c} · ${m.loc} · ${isNew?'':(m.r-1)+' existing reports merged — no duplicate complaint created'}</div></div>
+ <h3>Civic Priority Score</h3>${bk(m)}<button class="btn" style="margin-top:10px" onclick="go('det',${m.id})">Track issue #${m.id} →</button>`;
+ if(el)el.innerHTML=html;if(CH){CH.m.push({b:1,x:`✅ Issue #${m.id}: ${m.r} reports merged · Priority ${P(m)}/100 · ${lv(m)[0]}`});drawChat()}return m}
+function bk(i){const L=[['Severity',35],['Community Impact',25],['Location Risk',20],['Duration',10],['Reports',10]];
+ return L.map((l,k)=>`<div class="bd"><span>${l[0]}</span><div class="bar"><i style="width:${i.b[k]/l[1]*100}%"></i></div><b>${i.b[k]}/${l[1]}</b></div>`).join('')+`<div class="bd"><b>Total</b><span></span><b>${P(i)}/100</b></div>`}
+// ---------- form report ----------
+function Rep(){const cats=['Pothole','Garbage','Water Leakage','Broken Streetlight','Road Damage','Open Drain','Traffic/Signboard','Other'];
+ $('#app').innerHTML=`<div class="grid g2"><div class="card"><h2>${t('rep')}</h2><div class="grid"><div><b>Photo / video evidence</b><div class="row" style="margin:6px 0"><button class="btn alt" onclick="$('#f1').click()">📷 Take photo</button><button class="btn alt" onclick="$('#f2').click()">🎥 Record video</button><button class="btn alt" onclick="$('#f3').click()">🖼 Upload from gallery</button></div><input id="f1" type="file" accept="image/*" capture="environment" hidden onchange="pick(this)"><input id="f2" type="file" accept="video/*" capture="environment" hidden onchange="pick(this)"><input id="f3" type="file" accept="image/*,video/*" multiple hidden onchange="pick(this)"><div id="pv" class="row"></div></div>
+ <label>Category<select id="rc">${cats.map(c=>`<option>${c}</option>`).join('')}</select></label>
+ <label>Description<textarea id="rd" rows="3" placeholder="What’s wrong?"></textarea></label>
+ <label>Location<input id="rl" placeholder="Landmark or GPS"></label>
+ <div class="row"><button class="btn alt" onclick="$('#rl').value='Detected GPS: 12.9716° N, 77.5946° E'">${t('gps')}</button><button class="btn" onclick="finish($('#rc').value,$('#rr'),{sev:'High',l:$('#rl').value})">Submit report</button></div></div></div>
+ <div class="card"><h2>Analysis</h2><div id="rr" class="mu">Submit to see verification, duplicate merging and priority.</div></div></div>`}
+function pick(el){[...el.files].forEach(f=>{const r=new FileReader(),v=f.type.startsWith('video');r.onload=()=>$('#pv').insertAdjacentHTML('beforeend',v?`<video src="${r.result}" controls style="height:90px;border-radius:8px"></video>`:`<img src="${r.result}" style="height:90px;border-radius:8px">`);r.readAsDataURL(f)});el.value=''}
+// ---------- nearby / track ----------
+function ItemCard(i,sup){const l=lv(i);return `<div class="item" onclick="go('det',${i.id})">${SC(i)}<div style="flex:1"><b>${i.c}</b> <span class="badge c-${l[1]}">${l[0]}</span><div class="sm mu">${i.r} reports · +${i.v} upvotes · ${i.d} away · ${i.loc}</div></div>${sup?`<button class="btn alt" onclick="event.stopPropagation();up(${i.id})">Support</button>`:''}</div>`}
+function up(id){const i=I.find(x=>x.id==id);i.v++;i.b[1]=Math.min(25,i.b[1]+(i.v%5==0?1:0));render()}
+function Near(){$('#app').innerHTML=`<h2>${t('nb')}</h2><p class="mu sm">Is it the same problem? Support the existing issue instead of filing a duplicate — confidence and priority rise.</p>${[...I].filter(i=>i.st!='Resolved').sort((a,b)=>parseFloat(a.d)*(/km/.test(a.d)?1000:1)-parseFloat(b.d)*(/km/.test(b.d)?1000:1)).map(i=>ItemCard(i,1)).join('')}`}
+function Track(){$('#app').innerHTML=`<h2>${t('trk')}</h2>${[I[0],I[1],I[6]].map(i=>ItemCard(i)+`<div class="tl" style="margin:-2px 0 14px">${STEPS.map((s,k)=>`<span class="${k<prog(i)?'d':''}">${s}</span>`).join('')}</div>`).join('')}`}
+// ---------- authority ----------
+function Dash(){const n=s=>I.filter(i=>i.st==s).length,crit=I.filter(i=>lv(i)[0]=='CRITICAL').length;
+ const cats={};I.forEach(i=>cats[i.c]=(cats[i.c]||0)+i.r);const mx=Math.max(...Object.values(cats));
+ $('#app').innerHTML=`<div class="grid g4">${[['Total Issues',I.length],['Critical',crit],['High Priority',I.filter(i=>lv(i)[0]=='High').length],['In Progress',n('In Progress')],['Resolved',n('Resolved')],['Reopened',n('Reopened')]].map(s=>`<div class="card stat"><b>${s[1]}</b><span class="mu sm">${s[0]}</span></div>`).join('')}</div>
+ <div class="grid g2" style="margin-top:14px"><div class="card"><h2>Predictive civic heatmap</h2>${MapSvg()}<div class="row sm mu"><span><span class="badge c-r">&nbsp;</span> Critical</span><span><span class="badge c-o">&nbsp;</span> High</span><span><span class="badge c-y">&nbsp;</span> Medium</span><span><span class="badge c-g">&nbsp;</span> Low / Resolved</span></div></div>
+ <div class="card"><h2>Priority queue</h2>${[...I].sort((a,b)=>P(b)-P(a)).map(i=>ItemCard(i)).join('')}</div></div>
+ <div class="grid g2" style="margin-top:14px"><div class="card"><h2>Reports by category</h2>${Object.entries(cats).map(([c,v])=>`<div class="bd"><span>${c}</span><div class="bar"><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join('')}</div>
+ <div class="card"><h2>Predictive analytics <span class="badge c-b">Prototype predictions</span></h2><p>🔮 High probability of recurring <b>water leakage</b> in the Ward 7 zone.</p><p>📈 Road damage complaints increased <b>38%</b> during the previous rainy period.</p><p>🛠 Preventive maintenance recommended around College Road and Station Lane.</p><div class="note">Simulated outputs from demo data; no trained ML model is attached in this prototype.</div></div></div>`}
+function MapSvg(){const col=i=>({r:'#dc2626',o:'#ea7a0c',y:'#c99700',g:'#16a34a'})[lv(i)[1]];
+ return `<svg viewBox="0 0 600 320" width="100%" style="background:var(--bg);border-radius:10px;border:1px solid var(--bd)"><defs>${I.map(i=>`<radialGradient id="h${i.id}"><stop offset="0" stop-color="${col(i)}" stop-opacity=".55"/><stop offset="1" stop-color="${col(i)}" stop-opacity="0"/></radialGradient>`).join('')}</defs>
+ <g stroke="var(--bd)" stroke-width="6" fill="none"><path d="M0 170H600M300 0V320M0 90 600 250M120 0 220 320"/></g><text x="12" y="305">Schematic city map (offline demo tiles)</text>
+ ${I.map(i=>`<circle cx="${i.x}" cy="${i.y}" r="${20+i.r*1.3}" fill="url(#h${i.id})"/>`).join('')}
+ ${I.map(i=>`<g style="cursor:pointer" onclick="go('det',${i.id})"><circle cx="${i.x}" cy="${i.y}" r="9" fill="${col(i)}" stroke="#fff" stroke-width="2"/><text x="${i.x+12}" y="${i.y+4}">#${i.id}</text></g>`).join('')}</svg>`}
+// ---------- detail ----------
+function act(id,a){const i=I.find(x=>x.id==id);if(a=='asg')i.dept=DEPT[i.c];if(a=='prog'){i.dept=i.dept||DEPT[i.c];i.st='In Progress'}if(a=='res'){i.dept=i.dept||DEPT[i.c];i.st='Resolved (verifying)';i.vote={y:0,n:0}}render()}
+function vote(id,k){const i=I.find(x=>x.id==id);if(i.st!='Resolved (verifying)'&&i.st!='Reopened')return;i.vote[k]++;
+ if(i.vote.y>=3&&i.vote.y>i.vote.n)i.st='Resolved';else if(i.vote.n>=3&&i.vote.n>=i.vote.y)i.st='Reopened';render()}
+function Det(){const i=I.find(x=>x.id==SEL),l=lv(i),v=i.vote,ver=i.st=='Resolved (verifying)';
+ const bt=(a,txt,c)=>`<button class="btn ${c||'alt'}" onclick="act(${i.id},'${a}')">${txt}</button>`;
+ $('#app').innerHTML=`<button class="btn alt" onclick="go('${MODE=='cit'?'near':'dash'}')">← Back</button><div class="grid g2" style="margin-top:12px"><div class="card"><div class="row"><h2 style="margin:0">CIVIC ISSUE #${i.id}</h2><span class="badge c-${l[1]}">${l[0]}</span><span class="badge c-b">${i.st}</span></div>
+ <div style="height:130px;border-radius:10px;margin:12px 0;background:linear-gradient(135deg,#3b4658,#1f2937);display:grid;place-items:center;color:#cbd5e1">📷 Original image (demo placeholder)</div>
+ <div class="vg"><span class="mu">Category</span><b>${i.c}</b><span class="mu">Location</span><b>${i.loc}</b><span class="mu">Supporting reports</span><b>${i.r}</b><span class="mu">Upvotes</span><b>${i.v}</b><span class="mu">Trust score</span><b>${i.t}/100</b><span class="mu">Nearby</span><b>${i.near}</b><span class="mu">First reported</span><b>${i.days} days ago</b><span class="mu">Department</span><b>${i.dept||'Unassigned'}</b></div>
+ <p class="mu sm">${i.r} citizen reports consolidated into one civic issue. Supporting reports: ${[...Array(Math.min(3,i.r))].map((_,k)=>`R-${i.id}-${k+1}`).join(', ')} … (+${Math.max(0,i.r-3)} more)</p></div>
+ <div class="card"><h2>Priority analysis</h2>${bk(i)}<div class="note">Inputs: hazard type, severity, reports, upvotes, duration, concentration, proximity to schools / hospitals / transit.</div>
+ <h2 style="margin-top:16px">Status timeline</h2><div class="tl">${STEPS.map((s,k)=>`<span class="${k<prog(i)?'d':''}">${s}</span>`).join('')}</div>
+ ${MODE=='auth'?`<div class="row" style="margin-top:14px">${bt('asg','Assign Department')}${bt('prog','Mark In Progress','o')}${bt('res','Mark Resolved','ok')}</div>`:`<div class="row" style="margin-top:14px"><button class="btn" onclick="up(${i.id})">YES, SUPPORT THIS ISSUE</button></div>`}
+ ${ver?`<div class="card" style="margin-top:14px;border-color:var(--g)"><b>Has this issue actually been fixed?</b><div class="sm mu">Asked of nearby citizens · YES ${v.y} · NO ${v.n} (3 matching votes decide)</div><div class="row" style="margin-top:8px"><button class="btn ok" onclick="vote(${i.id},'y')">YES — RESOLVED</button><button class="btn no" onclick="vote(${i.id},'n')">NO — STILL EXISTS</button></div></div>`:''}
+ ${i.st=='Reopened'?`<div class="warn"><b>REOPENED</b><br>Community verification indicates that the issue may not be fully resolved.</div>`:''}
+ ${i.st=='Resolved'?`<div class="note" style="border-color:var(--g)">Citizen verified: resolution confirmed by neighbours.</div>`:''}</div></div>`}
+render();
+</script></body></html>
